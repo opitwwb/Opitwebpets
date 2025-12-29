@@ -58,17 +58,25 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
       <article className="max-w-4xl mx-auto px-4 py-16">
+        {/* Breadcrumb */}
         <nav className="mb-8">
-          <Link href="/blog" className="text-purple-600 hover:text-purple-800 transition-colors inline-flex items-center font-semibold">
+          <Link
+            href="/blog"
+            className="text-purple-600 hover:text-purple-800 transition-colors inline-flex items-center font-semibold"
+          >
             ← Voltar para o blog
           </Link>
         </nav>
 
+        {/* Header */}
         <header className="mb-12">
           {post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
               {post.categories.map((category: string, idx: number) => (
-                <span key={idx} className="text-sm font-semibold text-purple-600 bg-purple-100 px-4 py-2 rounded-full">
+                <span
+                  key={idx}
+                  className="text-sm font-semibold text-purple-600 bg-purple-100 px-4 py-2 rounded-full"
+                >
                   {category}
                 </span>
               ))}
@@ -80,6 +88,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </time>
         </header>
 
+        {/* Conteúdo */}
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
           <div className="prose prose-lg max-w-none">
             <MDXRemote source={post.content} components={components} />
