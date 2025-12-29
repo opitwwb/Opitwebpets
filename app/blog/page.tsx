@@ -3,11 +3,19 @@ import path from 'path';
 import matter from 'gray-matter';
 import Link from 'next/link';
 
-// Função para obter todos os posts
-function getAllPosts() {
+// Interface para definir a estrutura dos posts
+interface PostSummary {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+  categories: string[];
+}
+
+// Função para obter todos os posts com tipagem correta
+function getAllPosts(): PostSummary[] {
   const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
   
-  // Verificar se a pasta existe
   if (!fs.existsSync(postsDirectory)) {
     return [];
   }
@@ -27,7 +35,7 @@ function getAllPosts() {
         title: data.title || 'Sem título',
         date: data.date || new Date().toISOString(),
         excerpt: data.excerpt || '',
-        categories: data.categories || [],
+        categories: Array.isArray(data.categories) ? data.categories : [],
       };
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
@@ -65,10 +73,10 @@ export default function BlogPage() {
                 key={post.slug}
                 className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col"
               >
-                {/* Categorias */}
+                {/* Categorias - CORRIGIDO: Tipagem adicionada no map */}
                 {post.categories.length > 0 && (
                   <div className="px-6 pt-6 pb-2 flex flex-wrap gap-2">
-                    {post.categories.slice(0, 3).map((category, idx) => (
+                    {post.categories.slice(0, 3).map((category: string, idx: number) => (
                       <span
                         key={idx}
                         className="text-xs font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full"
