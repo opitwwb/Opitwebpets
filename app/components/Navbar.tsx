@@ -10,17 +10,19 @@ export default function Navbar() {
     <header className="bg-white shadow">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <span className="text-2xl">🐾</span>
-          <span className="font-bold text-xl text-purple-700">Opitweb</span>
+        <Link href="/">
+          <a className="flex items-center space-x-2">
+            <span className="text-2xl">🐾</span>
+            <span className="font-bold text-xl text-purple-700">Opitweb</span>
+          </a>
         </Link>
 
         {/* Desktop */}
         <nav className="hidden md:flex space-x-6">
-          <Link href="/" className="hover:text-purple-700">Início</Link>
-          <Link href="/about" className="hover:text-purple-700">Sobre</Link>
-          <Link href="/blog" className="hover:text-purple-700">Blog</Link>
-          <Link href="/contact" className="hover:text-purple-700">Contato</Link>
+          <Link href="/"><a className="hover:text-purple-700 transition-colors">Início</a></Link>
+          <Link href="/about"><a className="hover:text-purple-700 transition-colors">Sobre</a></Link>
+          <Link href="/blog"><a className="hover:text-purple-700 transition-colors">Blog</a></Link>
+          <Link href="/contact"><a className="hover:text-purple-700 transition-colors">Contato</a></Link>
         </nav>
 
         {/* Botão mobile */}
@@ -36,10 +38,10 @@ export default function Navbar() {
       {/* Mobile menu */}
       {open && (
         <nav className="md:hidden bg-white border-t px-4 py-4 space-y-3">
-          <Link onClick={() => setOpen(false)} href="/">Início</Link>
-          <Link onClick={() => setOpen(false)} href="/about">Sobre</Link>
-          <Link onClick={() => setOpen(false)} href="/blog">Blog</Link>
-          <Link onClick={() => setOpen(false)} href="/contact">Contato</Link>
+          <Link href="/"><a onClick={() => setOpen(false)}>Início</a></Link>
+          <Link href="/about"><a onClick={() => setOpen(false)}>Sobre</a></Link>
+          <Link href="/blog"><a onClick={() => setOpen(false)}>Blog</a></Link>
+          <Link href="/contact"><a onClick={() => setOpen(false)}>Contato</a></Link>
         </nav>
       )}
     </header>
