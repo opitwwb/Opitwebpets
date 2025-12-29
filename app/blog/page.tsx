@@ -6,14 +6,13 @@ import Link from 'next/link';
 // Função para obter todos os posts
 function getAllPosts() {
   const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
-  
-  // Verificar se a pasta existe
+
   if (!fs.existsSync(postsDirectory)) {
     return [];
   }
-  
+
   const fileNames = fs.readdirSync(postsDirectory);
-  
+
   const posts = fileNames
     .filter(fileName => fileName.endsWith('.mdx'))
     .map(fileName => {
@@ -21,46 +20,49 @@ function getAllPosts() {
       const fullPath = path.join(postsDirectory, fileName);
       const fileContents = fs.readFileSync(fullPath, 'utf8');
       const { data } = matter(fileContents);
-      
+
       return {
         slug,
         title: data.title || 'Sem título',
         date: data.date || new Date().toISOString(),
         excerpt: data.excerpt || '',
-        categories: data.categories || [],
+        categories: Array.isArray(data.categories)
+          ? data.categories.map(String)
+          : [],
       };
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  
+
   return posts;
 }
 
 export default function BlogPage() {
   const posts = getAllPosts();
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700">
       <div className="max-w-7xl mx-auto px-4 py-16">
         {/* Header */}
         <header className="text-center mb-16">
-          <h1 className="text-5xl font-bold text-white mb-4">
-            🐾 Blog Opitweb
-          </h1>
+          <h1 className="text-5xl font-bold text-white mb-4">🐾 Blog Opitweb</h1>
           <p className="text-xl text-purple-100">
             Dicas, guias e tudo sobre produtos pet com economia inteligente
           </p>
         </header>
-        
+
         {/* Grid de Posts */}
         {posts.length === 0 ? (
           <div className="bg-white rounded-2xl shadow-xl p-12 text-center">
             <p className="text-gray-600 text-lg">
-              Nenhum post encontrado. Adicione seus posts na pasta <code className="bg-gray-100 px-2 py-1 rounded">app/blog/posts/</code>
+              Nenhum post encontrado. Adicione seus posts na pasta{' '}
+              <code className="bg-gray-100 px-2 py-1 rounded">
+                app/blog/posts/
+              </code>
             </p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {posts.map((post) => (
+            {posts.map(post => (
               <article
                 key={post.slug}
                 className="bg-white rounded-2xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 flex flex-col"
@@ -68,37 +70,39 @@ export default function BlogPage() {
                 {/* Categorias */}
                 {post.categories.length > 0 && (
                   <div className="px-6 pt-6 pb-2 flex flex-wrap gap-2">
-                    {post.categories.slice(0, 3).map((category, idx) => (
-                      <span
-                        key={idx}
-                        className="text-xs font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full"
-                      >
-                        {category}
-                      </span>
-                    ))}
+                    {post.categories.slice(0, 3).map(
+                      (category: string, idx: number) => (
+                        <span
+                          key={idx}
+                          className="text-xs font-semibold text-purple-600 bg-purple-100 px-3 py-1 rounded-full"
+                        >
+                          {category}
+                        </span>
+                      )
+                    )}
                   </div>
                 )}
-                
+
                 {/* Conteúdo */}
                 <div className="px-6 py-4 flex-1 flex flex-col">
                   <h2 className="text-2xl font-bold text-gray-800 mb-3 line-clamp-2">
                     {post.title}
                   </h2>
-                  
+
                   <p className="text-gray-600 mb-4 line-clamp-3 flex-1">
                     {post.excerpt}
                   </p>
-                  
+
                   <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
                     <time dateTime={post.date}>
                       {new Date(post.date).toLocaleDateString('pt-BR', {
                         day: '2-digit',
                         month: 'long',
-                        year: 'numeric'
+                        year: 'numeric',
                       })}
                     </time>
                   </div>
-                  
+
                   <Link
                     href={`/blog/${post.slug}`}
                     className="inline-flex items-center justify-center bg-gradient-to-r from-purple-500 to-purple-700 text-white font-semibold py-3 px-6 rounded-lg hover:from-purple-600 hover:to-purple-800 transition-all duration-300"
@@ -110,7 +114,7 @@ export default function BlogPage() {
             ))}
           </div>
         )}
-        
+
         {/* Footer do Blog */}
         <div className="mt-16 text-center">
           <Link
