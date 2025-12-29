@@ -5,8 +5,18 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+// Interface para tipar o Post
+interface PostData {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+  categories: string[];
+  content: string;
+}
+
 // Função para obter o conteúdo de um post específico
-async function getPostBySlug(slug: string) {
+async function getPostBySlug(slug: string): Promise<PostData | null> {
   try {
     const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
     const fullPath = path.join(postsDirectory, `${slug}.mdx`);
@@ -23,7 +33,7 @@ async function getPostBySlug(slug: string) {
       title: data.title || 'Sem título',
       date: data.date || new Date().toISOString(),
       excerpt: data.excerpt || '',
-      categories: data.categories || [],
+      categories: Array.isArray(data.categories) ? data.categories : [],
       content,
     };
   } catch (error) {
@@ -31,7 +41,7 @@ async function getPostBySlug(slug: string) {
   }
 }
 
-// Gerar páginas estáticas para todos os posts (otimização Next.js)
+// Gerar páginas estáticas para todos os posts
 export async function generateStaticParams() {
   const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
   
@@ -93,7 +103,6 @@ export default async function BlogPostPage({
 }) {
   const post = await getPostBySlug(params.slug);
   
-  // Se o post não existir, mostrar página 404
   if (!post) {
     notFound();
   }
@@ -101,7 +110,6 @@ export default async function BlogPostPage({
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
       <article className="max-w-4xl mx-auto px-4 py-16">
-        {/* Breadcrumb - Navegação */}
         <nav className="mb-8">
           <Link
             href="/blog"
@@ -111,12 +119,11 @@ export default async function BlogPostPage({
           </Link>
         </nav>
         
-        {/* Cabeçalho do Post */}
         <header className="mb-12">
-          {/* Categorias */}
+          {/* CORREÇÃO AQUI: Tipagem adicionada no map (category: string, idx: number) */}
           {post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
-              {post.categories.map((category, idx) => (
+              {post.categories.map((category: string, idx: number) => (
                 <span
                   key={idx}
                   className="text-sm font-semibold text-purple-600 bg-purple-100 px-4 py-2 rounded-full"
@@ -127,12 +134,10 @@ export default async function BlogPostPage({
             </div>
           )}
           
-          {/* Título Principal */}
           <h1 className="text-5xl font-bold text-gray-900 mb-4 leading-tight">
             {post.title}
           </h1>
           
-          {/* Data de Publicação */}
           <div className="flex items-center text-gray-600 text-sm">
             <time dateTime={post.date}>
               📅 {new Date(post.date).toLocaleDateString('pt-BR', {
@@ -143,18 +148,15 @@ export default async function BlogPostPage({
             </time>
           </div>
           
-          {/* Linha divisória */}
           <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-purple-700 mt-6 rounded-full"></div>
         </header>
         
-        {/* Conteúdo do Post em MDX */}
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
           <div className="prose prose-lg max-w-none">
             <MDXRemote source={post.content} components={components} />
           </div>
         </div>
         
-        {/* Rodapé do Post - CTA */}
         <footer className="mt-12 p-8 bg-gradient-to-r from-purple-500 to-purple-700 rounded-2xl shadow-lg text-white text-center">
           <h3 className="text-2xl font-bold mb-4">💚 Gostou do conteúdo?</h3>
           <p className="text-lg mb-6 opacity-95">
