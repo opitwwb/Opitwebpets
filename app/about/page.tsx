@@ -21,9 +21,7 @@ async function getPostBySlug(slug: string): Promise<Post | null> {
     const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
     const fullPath = path.join(postsDirectory, `${slug}.mdx`);
 
-    if (!fs.existsSync(fullPath)) {
-      return null;
-    }
+    if (!fs.existsSync(fullPath)) return null;
 
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
@@ -36,7 +34,7 @@ async function getPostBySlug(slug: string): Promise<Post | null> {
       categories: Array.isArray(data.categories) ? data.categories.map(String) : [],
       content,
     };
-  } catch (error) {
+  } catch {
     return null;
   }
 }
@@ -44,7 +42,6 @@ async function getPostBySlug(slug: string): Promise<Post | null> {
 // Gerar páginas estáticas para todos os posts
 export async function generateStaticParams() {
   const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
-
   if (!fs.existsSync(postsDirectory)) return [];
 
   return fs
