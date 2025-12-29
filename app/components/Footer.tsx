@@ -21,23 +21,23 @@ export default function Footer() {
             <h4 className="text-lg font-bold mb-4">Links Rápidos</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/" className="text-purple-200 hover:text-white transition-colors">
-                  Início
+                <Link href="/">
+                  <a className="text-purple-200 hover:text-white transition-colors">Início</a>
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="text-purple-200 hover:text-white transition-colors">
-                  Sobre Nós
+                <Link href="/about">
+                  <a className="text-purple-200 hover:text-white transition-colors">Sobre Nós</a>
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="text-purple-200 hover:text-white transition-colors">
-                  Blog
+                <Link href="/blog">
+                  <a className="text-purple-200 hover:text-white transition-colors">Blog</a>
                 </Link>
               </li>
               <li>
-                <Link href="/contact" className="text-purple-200 hover:text-white transition-colors">
-                  Contato
+                <Link href="/contact">
+                  <a className="text-purple-200 hover:text-white transition-colors">Contato</a>
                 </Link>
               </li>
             </ul>
@@ -72,11 +72,10 @@ export default function Footer() {
             <p className="text-purple-200 text-sm mb-4">
               Receba alertas das melhores ofertas!
             </p>
-            <Link
-              href="/contact"
-              className="inline-block bg-white text-purple-700 px-6 py-2 rounded-lg font-semibold hover:bg-purple-100 transition-all"
-            >
-              Entrar em Contato
+            <Link href="/contact">
+              <a className="inline-block bg-white text-purple-700 px-6 py-2 rounded-lg font-semibold hover:bg-purple-100 transition-all">
+                Entrar em Contato
+              </a>
             </Link>
           </div>
         </div>
