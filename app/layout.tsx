@@ -1,19 +1,23 @@
-import type { Metadata } from 'next'
-import './globals.css'
+import type { Metadata } from 'next';
+import './globals.css';
+import Navbar from './components/Navbar';
 
 export const metadata: Metadata = {
-  title: 'OpitWeb - Economize nas Compras Pet',
-  description: 'Rastreador de preços gratuito da Amazon para produtos pet',
-}
+  title: 'Opitweb - Rastreador de Preços Pet na Amazon',
+  description: 'Economize em produtos para seu pet! Rastreador gratuito de preços da Amazon. Receba alertas e nunca mais pague a mais.',
+};
 
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <html lang="pt-BR">
-      <body>{children}</body>
+      <body className="antialiased">
+        <Navbar />
+        <main>{children}</main>
+      </body>
     </html>
-  )
+  );
 }
