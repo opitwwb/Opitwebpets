@@ -94,6 +94,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
       <article className="max-w-4xl mx-auto px-4 py-16">
+        {/* Breadcrumb */}
         <nav className="mb-8">
           <Link
             href="/blog"
@@ -103,6 +104,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           </Link>
         </nav>
 
+        {/* Cabeçalho do Post */}
         <header className="mb-12">
           {post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
@@ -128,12 +130,14 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
           <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-purple-700 mt-6 rounded-full"></div>
         </header>
 
+        {/* Conteúdo do Post */}
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
           <div className="prose prose-lg max-w-none">
             <MDXRemote source={post.content} components={components} />
           </div>
         </div>
 
+        {/* Rodapé do Post */}
         <footer className="mt-12 p-8 bg-gradient-to-r from-purple-500 to-purple-700 rounded-2xl shadow-lg text-white text-center">
           <h3 className="text-2xl font-bold mb-4">💚 Gostou do conteúdo?</h3>
           <p className="text-lg mb-6 opacity-95">
