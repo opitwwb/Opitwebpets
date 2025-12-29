@@ -14,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR">
       <body className="min-h-screen bg-white">
-        {/* Deixamos limpo para que a page.tsx controle a Navbar oficial */}
+        {/* Mantemos limpo para evitar a duplicidade de menus */}
         {children}
       </body>
     </html>
