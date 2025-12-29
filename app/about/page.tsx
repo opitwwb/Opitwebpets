@@ -1,134 +1,160 @@
-export default function AboutPage() {
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import { MDXRemote } from 'next-mdx-remote/rsc';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
+
+// Tipagem do Post
+type Post = {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+  categories: string[];
+  content: string;
+};
+
+// Função para obter o conteúdo de um post específico
+async function getPostBySlug(slug: string): Promise<Post | null> {
+  try {
+    const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
+    const fullPath = path.join(postsDirectory, `${slug}.mdx`);
+
+    if (!fs.existsSync(fullPath)) {
+      return null;
+    }
+
+    const fileContents = fs.readFileSync(fullPath, 'utf8');
+    const { data, content } = matter(fileContents);
+
+    return {
+      slug,
+      title: data.title || 'Sem título',
+      date: data.date || new Date().toISOString(),
+      excerpt: data.excerpt || '',
+      categories: Array.isArray(data.categories) ? data.categories.map(String) : [],
+      content,
+    };
+  } catch (error) {
+    return null;
+  }
+}
+
+// Gerar páginas estáticas para todos os posts
+export async function generateStaticParams() {
+  const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
+
+  if (!fs.existsSync(postsDirectory)) return [];
+
+  return fs
+    .readdirSync(postsDirectory)
+    .filter((fileName) => fileName.endsWith('.mdx'))
+    .map((fileName) => ({ slug: fileName.replace(/\.mdx$/, '') }));
+}
+
+// Componentes MDX estilizados
+const components = {
+  h1: (props: any) => <h1 className="text-4xl font-bold text-gray-800 mb-6 mt-8" {...props} />,
+  h2: (props: any) => <h2 className="text-3xl font-bold text-gray-800 mb-4 mt-8" {...props} />,
+  h3: (props: any) => <h3 className="text-2xl font-semibold text-gray-800 mb-3 mt-6" {...props} />,
+  p: (props: any) => <p className="text-lg text-gray-700 mb-4 leading-relaxed" {...props} />,
+  ul: (props: any) => <ul className="list-disc list-inside mb-4 space-y-2 text-gray-700 ml-4" {...props} />,
+  ol: (props: any) => <ol className="list-decimal list-inside mb-4 space-y-2 text-gray-700 ml-4" {...props} />,
+  li: (props: any) => <li className="ml-4" {...props} />,
+  a: (props: any) => <a className="text-purple-600 hover:text-purple-800 underline font-semibold" {...props} />,
+  blockquote: (props: any) => (
+    <blockquote className="border-l-4 border-purple-500 pl-4 italic text-gray-600 my-6 bg-purple-50 py-2" {...props} />
+  ),
+  code: (props: any) => (
+    <code className="bg-gray-100 px-2 py-1 rounded text-sm font-mono text-purple-600" {...props} />
+  ),
+  pre: (props: any) => (
+    <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm" {...props} />
+  ),
+  img: (props: any) => <img className="rounded-lg shadow-lg my-6 w-full" alt="" {...props} />,
+  table: (props: any) => (
+    <div className="overflow-x-auto my-6 rounded-lg shadow">
+      <table className="min-w-full divide-y divide-gray-200 border" {...props} />
+    </div>
+  ),
+  thead: (props: any) => <thead className="bg-purple-100" {...props} />,
+  th: (props: any) => (
+    <th className="px-6 py-3 text-left text-xs font-bold text-purple-800 uppercase tracking-wider" {...props} />
+  ),
+  td: (props: any) => <td className="px-6 py-4 text-sm text-gray-700 border-b" {...props} />,
+  strong: (props: any) => <strong className="font-bold text-gray-900" {...props} />,
+};
+
+// Componente principal da página
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = await getPostBySlug(params.slug);
+  if (!post) notFound();
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500 via-purple-600 to-purple-700">
-      <div className="max-w-6xl mx-auto px-4 py-16">
-        {/* Header */}
-        <header className="text-center mb-16 animate-fadeInDown">
-          <h1 className="text-5xl font-bold text-white mb-4 drop-shadow-lg">
-            🐾 Opitweb
-          </h1>
-          <div className="text-2xl text-white/95 mb-4">
-            Seu Rastreador Gratuito de Preços Pet na Amazon
+    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
+      <article className="max-w-4xl mx-auto px-4 py-16">
+        <nav className="mb-8">
+          <Link
+            href="/blog"
+            className="text-purple-600 hover:text-purple-800 transition-colors inline-flex items-center font-semibold"
+          >
+            ← Voltar para o blog
+          </Link>
+        </nav>
+
+        <header className="mb-12">
+          {post.categories.length > 0 && (
+            <div className="flex flex-wrap gap-2 mb-4">
+              {post.categories.map((category: string, idx: number) => (
+                <span
+                  key={idx}
+                  className="text-sm font-semibold text-purple-600 bg-purple-100 px-4 py-2 rounded-full"
+                >
+                  {category}
+                </span>
+              ))}
+            </div>
+          )}
+
+          <h1 className="text-5xl font-bold text-gray-900 mb-4 leading-tight">{post.title}</h1>
+
+          <div className="flex items-center text-gray-600 text-sm">
+            <time dateTime={post.date}>
+              📅 {new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
+            </time>
           </div>
-          <div className="text-xl text-white/90 italic">
-            Nós unimos o amor pelos animais com a inteligência financeira. Nunca mais pague a mais por ração, brinquedos ou acessórios do seu pet favorito!
-          </div>
+
+          <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-purple-700 mt-6 rounded-full"></div>
         </header>
 
-        {/* Conteúdo Principal */}
-        <div className="bg-white rounded-3xl shadow-2xl p-12 space-y-12">
-          
-          {/* O Que Somos */}
-          <section>
-            <div className="flex items-center mb-6">
-              <span className="text-5xl mr-4">🎯</span>
-              <div>
-                <h2 className="text-3xl font-bold text-purple-600">O Que Somos e a Nossa Missão</h2>
-                <h3 className="text-2xl text-purple-500 mt-2">O Nosso Propósito</h3>
-              </div>
-            </div>
-            <p className="text-lg text-gray-700 mb-4 leading-relaxed">
-              <strong>O Que Fazemos:</strong> A Opitweb é uma ferramenta gratuita de rastreamento de preços especializada em produtos para animais de estimação na Amazon. Nós monitoramos milhares de itens e te alertamos sobre as melhores ofertas no momento certo.
-            </p>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              <strong>Missão:</strong> Simplificar a vida dos donos de pets, garantindo que eles economizem dinheiro sem comprometer a qualidade e o bem-estar dos seus companheiros.
-            </p>
-          </section>
-
-          {/* Nossa História */}
-          <section>
-            <div className="flex items-center mb-6">
-              <span className="text-5xl mr-4">📖</span>
-              <div>
-                <h2 className="text-3xl font-bold text-purple-600">Nossa História</h2>
-                <h3 className="text-2xl text-purple-500 mt-2">A Conexão com os Pets</h3>
-              </div>
-            </div>
-            <p className="text-lg text-gray-700 mb-4 leading-relaxed">
-              A Opitweb nasceu quando percebemos o quão volátil é o preço dos produtos pet na Amazon. Como donos de animais de estimação, ficávamos frustrados por pagar preços diferentes pelo mesmo saco de ração toda semana.
-            </p>
-            <p className="text-lg text-gray-700 leading-relaxed">
-              Decidimos criar uma solução que pudesse monitorar esses movimentos de mercado e notificar outros donos de pets. Hoje, somos uma comunidade dedicada a garantir que você tenha acesso aos melhores produtos com a máxima economia.
-            </p>
-          </section>
-
-          {/* Nossos Valores */}
-          <section>
-            <div className="flex items-center mb-6">
-              <span className="text-5xl mr-4">⭐</span>
-              <div>
-                <h2 className="text-3xl font-bold text-purple-600">Os Nossos Valores</h2>
-                <h3 className="text-2xl text-purple-500 mt-2">Nossos Pilares</h3>
-              </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl border-l-4 border-purple-600 hover:shadow-lg transition-all hover:-translate-y-1">
-                <h4 className="text-xl font-bold text-purple-700 mb-3">💰 Economia Inteligente</h4>
-                <p className="text-gray-700">Foco em encontrar descontos reais, não apenas promoções superficiais.</p>
-              </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl border-l-4 border-purple-600 hover:shadow-lg transition-all hover:-translate-y-1">
-                <h4 className="text-xl font-bold text-purple-700 mb-3">🐕 Pet-First</h4>
-                <p className="text-gray-700">O bem-estar do seu animal é nossa prioridade; promovemos produtos de qualidade a preços justos.</p>
-              </div>
-              <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-6 rounded-2xl border-l-4 border-purple-600 hover:shadow-lg transition-all hover:-translate-y-1">
-                <h4 className="text-xl font-bold text-purple-700 mb-3">🔍 Transparência</h4>
-                <p className="text-gray-700">Nosso serviço é gratuito. As ofertas são claras, sem pegadinhas.</p>
-              </div>
-            </div>
-          </section>
-
-          {/* Como Ajudamos */}
-          <section>
-            <div className="flex items-center mb-6">
-              <span className="text-5xl mr-4">🚀</span>
-              <div>
-                <h2 className="text-3xl font-bold text-purple-600">Como a Opitweb Ajuda Você</h2>
-                <h3 className="text-2xl text-purple-500 mt-2">Seu Caminho para a Economia</h3>
-              </div>
-            </div>
-            <div className="space-y-6 mt-8">
-              <div className="flex items-start bg-gray-50 p-6 rounded-2xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 transition-all hover:translate-x-2">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white text-xl font-bold mr-6">
-                  1
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-purple-700 mb-2">Rastreie Seus Favoritos</h4>
-                  <p className="text-gray-700">Você seleciona os produtos pet da Amazon que costuma comprar.</p>
-                </div>
-              </div>
-              <div className="flex items-start bg-gray-50 p-6 rounded-2xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 transition-all hover:translate-x-2">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white text-xl font-bold mr-6">
-                  2
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-purple-700 mb-2">Receba Alertas</h4>
-                  <p className="text-gray-700">Nós te notificamos instantaneamente quando o preço atingir um valor ideal ou entrar em Oferta Relâmpago.</p>
-                </div>
-              </div>
-              <div className="flex items-start bg-gray-50 p-6 rounded-2xl hover:bg-gradient-to-r hover:from-purple-50 hover:to-purple-100 transition-all hover:translate-x-2">
-                <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full flex items-center justify-center text-white text-xl font-bold mr-6">
-                  3
-                </div>
-                <div>
-                  <h4 className="text-xl font-bold text-purple-700 mb-2">Compre e Economize</h4>
-                  <p className="text-gray-700">Clique, compre na Amazon e veja o dinheiro extra no seu bolso.</p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* CTA Box */}
-          <div className="bg-gradient-to-r from-purple-500 to-purple-700 p-8 rounded-2xl text-center text-white">
-            <p className="text-xl font-semibold">💚 Junte-se a milhares de donos de pets que já economizam com a Opitweb!</p>
+        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
+          <div className="prose prose-lg max-w-none">
+            <MDXRemote source={post.content} components={components} />
           </div>
         </div>
 
-        {/* Footer */}
-        <footer className="text-center mt-12 text-white">
-          <p className="text-sm">&copy; 2025 Opitweb - Todos os direitos reservados</p>
-          <p className="text-sm mt-2">Feito com ❤️ para você e seu pet</p>
+        <footer className="mt-12 p-8 bg-gradient-to-r from-purple-500 to-purple-700 rounded-2xl shadow-lg text-white text-center">
+          <h3 className="text-2xl font-bold mb-4">💚 Gostou do conteúdo?</h3>
+          <p className="text-lg mb-6 opacity-95">
+            Continue acompanhando o blog Opitweb para mais dicas sobre produtos pet e economia inteligente!
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link
+              href="/blog"
+              className="inline-block bg-white text-purple-600 font-semibold py-3 px-8 rounded-lg hover:bg-purple-50 transition-all duration-300 shadow-lg"
+            >
+              Ver mais posts
+            </Link>
+            <Link
+              href="/contact"
+              className="inline-block bg-purple-800 text-white font-semibold py-3 px-8 rounded-lg hover:bg-purple-900 transition-all duration-300 shadow-lg"
+            >
+              Fale conosco
+            </Link>
+          </div>
         </footer>
-      </div>
+      </article>
     </div>
   );
 }
