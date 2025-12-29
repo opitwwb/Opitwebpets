@@ -5,19 +5,29 @@ import { MDXRemote } from 'next-mdx-remote/rsc';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
+// Tipagem do Post
+type Post = {
+  slug: string;
+  title: string;
+  date: string;
+  excerpt: string;
+  categories: string[];
+  content: string;
+};
+
 // Função para obter o conteúdo de um post específico
-async function getPostBySlug(slug: string) {
+async function getPostBySlug(slug: string): Promise<Post | null> {
   try {
     const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
     const fullPath = path.join(postsDirectory, `${slug}.mdx`);
-    
+
     if (!fs.existsSync(fullPath)) {
       return null;
     }
-    
+
     const fileContents = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = matter(fileContents);
-    
+
     return {
       slug,
       title: data.title || 'Sem título',
@@ -34,16 +44,16 @@ async function getPostBySlug(slug: string) {
 // Gerar páginas estáticas para todos os posts (otimização Next.js)
 export async function generateStaticParams() {
   const postsDirectory = path.join(process.cwd(), 'app/blog/posts');
-  
+
   if (!fs.existsSync(postsDirectory)) {
     return [];
   }
-  
+
   const fileNames = fs.readdirSync(postsDirectory);
-  
+
   return fileNames
-    .filter(fileName => fileName.endsWith('.mdx'))
-    .map(fileName => ({
+    .filter((fileName) => fileName.endsWith('.mdx'))
+    .map((fileName) => ({
       slug: fileName.replace(/\.mdx$/, ''),
     }));
 }
@@ -67,9 +77,7 @@ const components = {
   pre: (props: any) => (
     <pre className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto mb-6 text-sm" {...props} />
   ),
-  img: (props: any) => (
-    <img className="rounded-lg shadow-lg my-6 w-full" alt="" {...props} />
-  ),
+  img: (props: any) => <img className="rounded-lg shadow-lg my-6 w-full" alt="" {...props} />,
   table: (props: any) => (
     <div className="overflow-x-auto my-6 rounded-lg shadow">
       <table className="min-w-full divide-y divide-gray-200 border" {...props} />
@@ -79,9 +87,7 @@ const components = {
   th: (props: any) => (
     <th className="px-6 py-3 text-left text-xs font-bold text-purple-800 uppercase tracking-wider" {...props} />
   ),
-  td: (props: any) => (
-    <td className="px-6 py-4 text-sm text-gray-700 border-b" {...props} />
-  ),
+  td: (props: any) => <td className="px-6 py-4 text-sm text-gray-700 border-b" {...props} />,
   strong: (props: any) => <strong className="font-bold text-gray-900" {...props} />,
 };
 
@@ -92,16 +98,15 @@ export default async function BlogPostPage({
   params: { slug: string };
 }) {
   const post = await getPostBySlug(params.slug);
-  
-  // Se o post não existir, mostrar página 404
+
   if (!post) {
     notFound();
   }
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-white">
       <article className="max-w-4xl mx-auto px-4 py-16">
-        {/* Breadcrumb - Navegação */}
+        {/* Breadcrumb */}
         <nav className="mb-8">
           <Link
             href="/blog"
@@ -110,13 +115,12 @@ export default async function BlogPostPage({
             ← Voltar para o blog
           </Link>
         </nav>
-        
+
         {/* Cabeçalho do Post */}
         <header className="mb-12">
-          {/* Categorias */}
           {post.categories.length > 0 && (
             <div className="flex flex-wrap gap-2 mb-4">
-              {post.categories.map((category, idx) => (
+              {post.categories.map((category: string, idx: number) => (
                 <span
                   key={idx}
                   className="text-sm font-semibold text-purple-600 bg-purple-100 px-4 py-2 rounded-full"
@@ -126,35 +130,26 @@ export default async function BlogPostPage({
               ))}
             </div>
           )}
-          
-          {/* Título Principal */}
-          <h1 className="text-5xl font-bold text-gray-900 mb-4 leading-tight">
-            {post.title}
-          </h1>
-          
-          {/* Data de Publicação */}
+
+          <h1 className="text-5xl font-bold text-gray-900 mb-4 leading-tight">{post.title}</h1>
+
           <div className="flex items-center text-gray-600 text-sm">
             <time dateTime={post.date}>
-              📅 {new Date(post.date).toLocaleDateString('pt-BR', {
-                day: '2-digit',
-                month: 'long',
-                year: 'numeric'
-              })}
+              📅 {new Date(post.date).toLocaleDateString('pt-BR', { day: '2-digit', month: 'long', year: 'numeric' })}
             </time>
           </div>
-          
-          {/* Linha divisória */}
+
           <div className="w-20 h-1 bg-gradient-to-r from-purple-500 to-purple-700 mt-6 rounded-full"></div>
         </header>
-        
-        {/* Conteúdo do Post em MDX */}
+
+        {/* Conteúdo do Post */}
         <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
           <div className="prose prose-lg max-w-none">
             <MDXRemote source={post.content} components={components} />
           </div>
         </div>
-        
-        {/* Rodapé do Post - CTA */}
+
+        {/* Rodapé do Post */}
         <footer className="mt-12 p-8 bg-gradient-to-r from-purple-500 to-purple-700 rounded-2xl shadow-lg text-white text-center">
           <h3 className="text-2xl font-bold mb-4">💚 Gostou do conteúdo?</h3>
           <p className="text-lg mb-6 opacity-95">
