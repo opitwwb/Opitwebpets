@@ -1,7 +1,7 @@
 'use client'
 
 import React, { useState, useEffect } from 'react';
-import { Phone, Mail, Clock, Star, CheckCircle, Tag, TrendingDown, Bell, Heart, ChevronRight, Users, ThumbsUp, Zap, Award, BadgeCheck, Sparkles, ShoppingCart, AlertCircle, Search, MapPin } from 'lucide-react';
+import { Mail, Star, CheckCircle, Tag, TrendingDown, Bell, Heart, ChevronRight, Users, Sparkles, Search, MapPin, Phone, Clock } from 'lucide-react';
 
 export default function OpitWebHomePage() {
   const [email, setEmail] = useState('');
@@ -53,7 +53,9 @@ export default function OpitWebHomePage() {
 
   return (
     <main className="min-h-screen bg-white overflow-hidden">
-      {/* O BLOCO <header> FOI REMOVIDO DAQUI PORQUE JÁ ESTÁ NO LAYOUT.JS */}
+      {/* A NAVBAR ANTIGA FOI REMOVIDA DAQUI. 
+          ELA AGORA É GERIDA PELO layout.js 
+      */}
 
       {/* Floating CTA Button */}
       <div className={`fixed bottom-6 right-6 z-50 transition-all duration-500 ${showFloatingCTA ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'}`}>
@@ -66,7 +68,7 @@ export default function OpitWebHomePage() {
         </button>
       </div>
 
-      {/* Hero Section - Adicionado pt-20 para não ficar por baixo da navbar */}
+      {/* Hero Section - Adicionado pt-32 para compensar a navbar fixa */}
       <section className="relative bg-gradient-to-br from-orange-600 via-orange-500 to-amber-500 text-white py-24 pt-32 overflow-hidden">
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{ 
@@ -100,7 +102,7 @@ export default function OpitWebHomePage() {
                 <ChevronRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </button>
               
-              <button className="border-2 border-white hover:bg-white hover:text-orange-600 text-white px-10 py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2">
+              <button className="border-3 border-white hover:bg-white hover:text-orange-600 text-white px-10 py-5 rounded-xl font-bold text-lg transition-all flex items-center justify-center gap-2">
                 <Tag className="w-5 h-5" />
                 Ver Ofertas do Dia
               </button>
@@ -109,8 +111,127 @@ export default function OpitWebHomePage() {
         </div>
       </section>
 
-      {/* Restante das secções (Stats, Categories, etc) mantêm-se iguais... */}
-      {/* ... (Omitido para brevidade, mas deve manter o resto do seu código original) ... */}
+      {/* Stats Banner */}
+      <section className="bg-gradient-to-r from-orange-700 to-orange-600 py-12 relative overflow-hidden">
+        <div className="absolute inset-0 bg-black opacity-10"></div>
+        <div className="relative max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center transform hover:scale-110 transition-all duration-300">
+                <div className="flex justify-center mb-3 text-yellow-300">
+                  {stat.icon}
+                </div>
+                <div className="text-4xl md:text-5xl font-black text-white mb-2">{stat.number}</div>
+                <div className="text-orange-100 font-semibold">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Categorias */}
+      <section className="py-16 bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-black text-gray-900 mb-4">🏪 Navegue por Categorias</h2>
+            <p className="text-gray-600">Encontre os melhores preços em cada categoria</p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+            {['Alimentação', 'Medicamentos', 'Higiene', 'Brinquedos', 'Camas', 'Acessórios'].map((cat, i) => (
+              <button key={i} className="group bg-gradient-to-br from-orange-50 to-white p-6 rounded-2xl border-2 border-orange-100 hover:border-orange-500 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1">
+                <div className="text-4xl mb-3">{['🍖', '💊', '🧼', '🎾', '🛏️', '🎒'][i]}</div>
+                <h3 className="font-bold text-gray-900 group-hover:text-orange-600 transition">{cat}</h3>
+              </button>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Como Funciona */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">Como Funciona? É Super Fácil! 🎉</h2>
+            <div className="h-1 w-24 bg-gradient-to-r from-orange-600 to-orange-400 mx-auto mb-4"></div>
+          </div>
+          <div className="grid md:grid-cols-3 gap-12">
+            {[
+              { n: 1, t: "Cadastre-se Grátis", d: "Crie sua conta gratuita em segundos." },
+              { n: 2, t: "Escolha Produtos", d: "Selecione os produtos pet que você mais compra." },
+              { n: 3, t: "Receba Alertas", d: "Quando o preço cair, você recebe um e-mail!" }
+            ].map((step) => (
+              <div key={step.n} className="text-center group">
+                <div className="bg-gradient-to-br from-orange-50 to-white p-12 rounded-3xl border-2 border-orange-100 hover:border-orange-500 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-full text-3xl font-black mb-6 shadow-lg">
+                    {step.n}
+                  </div>
+                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{step.t}</h3>
+                  <p className="text-gray-600">{step.d}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-black text-gray-900 mb-4">🔥 Ofertas em Destaque Hoje</h2>
+          </div>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {featuredProducts.map((product, index) => (
+              <div key={index} className="group bg-gradient-to-br from-orange-50 to-white p-6 rounded-2xl border-2 border-orange-100 hover:border-orange-500 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2">
+                <div className="text-center">
+                  <div className="mb-4 rounded-xl overflow-hidden bg-white border border-gray-100">
+                    <img src={product.image} alt={product.name} className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-300" />
+                  </div>
+                  <div className="inline-block bg-orange-100 text-orange-700 px-3 py-1 rounded-full text-xs font-bold mb-2">{product.category}</div>
+                  <div className="inline-block bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold mb-3 ml-2">{product.discount}</div>
+                  <h3 className="text-lg font-bold text-gray-900 mb-2 min-h-[3rem]">{product.name}</h3>
+                  <div className="text-3xl font-black text-orange-600 mb-4">{product.price}</div>
+                  <button className="w-full bg-orange-600 text-white px-6 py-3 rounded-lg font-bold">Ver na Amazon</button>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter */}
+      <section className="py-20 bg-gradient-to-br from-orange-600 to-amber-500 text-white">
+        <div className="max-w-4xl mx-auto px-4 text-center">
+          <h2 className="text-4xl font-black mb-8">Não Perca Nenhuma Oferta! 📧</h2>
+          <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Seu melhor e-mail"
+              className="flex-1 px-6 py-4 rounded-xl text-gray-900 focus:outline-none"
+            />
+            <button onClick={handleNewsletterSubmit} className="bg-white text-orange-600 px-8 py-4 rounded-xl font-bold">Quero Economizar!</button>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer Info */}
+      <footer className="bg-gray-900 text-gray-300 py-12">
+        <div className="max-w-7xl mx-auto px-4 text-center">
+          <div className="mb-6">
+            <h3 className="text-3xl font-black text-white mb-2">🐾 OpitWeb</h3>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8 mb-8">
+            <p className="flex items-center justify-center gap-2"><Phone className="w-4 h-4 text-orange-500" /> (11) 96101-7230</p>
+            <p className="flex items-center justify-center gap-2"><Mail className="w-4 h-4 text-orange-500" /> contato@opitweb.com.br</p>
+            <p className="flex items-center justify-center gap-2"><MapPin className="w-4 h-4 text-orange-500" /> São Paulo</p>
+          </div>
+          <div className="border-t border-gray-800 pt-8 text-sm">
+            © 2024 OpitWeb. Todos os direitos reservados.
+          </div>
+        </div>
+      </footer>
     </main>
   );
 }
