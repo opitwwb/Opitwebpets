@@ -11,9 +11,9 @@ export default function Navbar() {
 
   const menuItems = [
     { name: 'Início', href: '/' },
-    { name: 'Sobre Nós', href: '/about' },
+    { name: 'Ofertas', href: '/ofertas' },
     { name: 'Blog', href: '/blog' },
-    { name: 'Contato', href: '/contact' },
+    { name: 'Sobre', href: '/about' },
   ];
 
   return (
@@ -23,7 +23,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 group">
             <span className="text-3xl">🐾</span>
-            <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent group-hover:from-purple-700 group-hover:to-purple-900 transition-all">
+            <span className="text-2xl font-bold bg-gradient-to-r from-orange-600 to-red-500 bg-clip-text text-transparent">
               Opitweb
             </span>
           </Link>
@@ -34,43 +34,53 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className="text-gray-700 hover:text-purple-600 font-semibold transition-colors relative group"
+                className="text-gray-700 hover:text-orange-600 font-semibold transition-colors"
               >
                 {item.name}
-                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
+            
+            {/* Botão Entrar/Cadastrar Laranja */}
+            <Link 
+              href="/login" 
+              className="bg-orange-600 text-white px-5 py-2 rounded-lg font-bold hover:bg-orange-700 transition-all shadow-md transform hover:scale-105 active:scale-95"
+            >
+              Entrar / Cadastrar
+            </Link>
           </div>
 
-          {/* Botão Mobile */}
+          {/* Botão Mobile (Hambúrguer) */}
           <button
             onClick={toggleMenu}
             className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-            aria-label="Toggle menu"
           >
-            {isOpen ? (
-              <X className="h-6 w-6 text-gray-700" />
-            ) : (
-              <Menu className="h-6 w-6 text-gray-700" />
-            )}
+            {isOpen ? <X className="h-6 w-6 text-gray-700" /> : <Menu className="h-6 w-6 text-gray-700" />}
           </button>
         </div>
       </div>
 
       {/* Menu Mobile */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
-          <div className="px-4 py-4 space-y-3">
+        <div className="md:hidden bg-white border-t border-gray-100 shadow-xl animate-in slide-in-from-top duration-300">
+          <div className="px-4 py-6 space-y-4">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={toggleMenu}
-                className="block px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg font-semibold transition-all"
+                className="block text-lg font-semibold text-gray-700 hover:text-orange-600 px-2"
               >
                 {item.name}
               </Link>
             ))}
+            <hr className="border-gray-100" />
+            <Link 
+              href="/login" 
+              onClick={toggleMenu}
+              className="block w-full text-center bg-orange-600 text-white px-4 py-3 rounded-xl font-bold shadow-lg"
+            >
+              Entrar / Cadastrar
+            </Link>
           </div>
         </div>
       )}
