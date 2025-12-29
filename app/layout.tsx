@@ -13,10 +13,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="pt-BR">
-      <body className="min-h-screen bg-white">
-        {/* Mantemos limpo para evitar a duplicidade de menus */}
-        {children}
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
