@@ -1,52 +1,31 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import { Menu, X } from 'lucide-react';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
-  // Efeito para mudar a cor quando der scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
   const menuItems = [
-    { name: 'Home', href: '/' },
-    { name: 'Ofertas', href: '/ofertas' },
+    { name: 'Início', href: '/' },
+    { name: 'Sobre Nós', href: '/about' },
     { name: 'Blog', href: '/blog' },
-    { name: 'Sobre', href: '/about' },
-    { name: 'Contato', href: '/contato' },
+    { name: 'Contato', href: '/contact' },
   ];
 
   return (
-    <nav 
-      className={`fixed w-full top-0 z-50 transition-all duration-300 ${
-        scrolled ? 'bg-white shadow-md py-2' : 'bg-transparent py-4'
-      }`}
-    >
+    <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 group">
             <span className="text-3xl">🐾</span>
-            <div className="flex flex-col">
-              <span className={`text-2xl font-bold leading-none ${scrolled ? 'text-orange-600' : 'text-white'}`}>
-                OpitWeb
-              </span>
-              <span className={`text-xs font-medium ${scrolled ? 'text-gray-500' : 'text-orange-100'}`}>
-                Economia Pet
-              </span>
-            </div>
+            <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-purple-800 bg-clip-text text-transparent group-hover:from-purple-700 group-hover:to-purple-900 transition-all">
+              Opitweb
+            </span>
           </Link>
 
           {/* Menu Desktop */}
@@ -55,59 +34,43 @@ export default function Navbar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`font-semibold transition-colors ${
-                  scrolled ? 'text-gray-700 hover:text-orange-600' : 'text-white hover:text-orange-200'
-                }`}
+                className="text-gray-700 hover:text-purple-600 font-semibold transition-colors relative group"
               >
                 {item.name}
+                <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-purple-600 group-hover:w-full transition-all duration-300"></span>
               </Link>
             ))}
-            
-            {/* Botão Entrar/Cadastrar */}
-            <Link 
-              href="/login" 
-              className={`${
-                scrolled 
-                ? 'bg-orange-600 text-white hover:bg-orange-700' 
-                : 'bg-white text-orange-600 hover:bg-orange-50'
-              } px-6 py-2.5 rounded-lg font-bold transition-all shadow-lg transform hover:scale-105 active:scale-95`}
-            >
-              Entrar / Cadastrar
-            </Link>
           </div>
 
           {/* Botão Mobile */}
           <button
             onClick={toggleMenu}
-            className={`md:hidden p-2 rounded-lg ${scrolled ? 'text-gray-700' : 'text-white'}`}
+            className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+            aria-label="Toggle menu"
           >
-            {isOpen ? <X className="h-7 w-7" /> : <Menu className="h-7 w-7" />}
+            {isOpen ? (
+              <X className="h-6 w-6 text-gray-700" />
+            ) : (
+              <Menu className="h-6 w-6 text-gray-700" />
+            )}
           </button>
         </div>
       </div>
 
       {/* Menu Mobile */}
       {isOpen && (
-        <div className="md:hidden bg-white border-t border-gray-100 shadow-2xl animate-in slide-in-from-top duration-300">
-          <div className="px-4 py-6 space-y-4">
+        <div className="md:hidden bg-white border-t border-gray-200 shadow-lg">
+          <div className="px-4 py-4 space-y-3">
             {menuItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
                 onClick={toggleMenu}
-                className="block text-lg font-semibold text-gray-800 hover:text-orange-600 px-2"
+                className="block px-4 py-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg font-semibold transition-all"
               >
                 {item.name}
               </Link>
             ))}
-            <hr className="border-gray-100" />
-            <Link 
-              href="/login" 
-              onClick={toggleMenu}
-              className="block w-full text-center bg-orange-600 text-white px-4 py-3 rounded-xl font-bold shadow-lg"
-            >
-              Entrar / Cadastrar
-            </Link>
           </div>
         </div>
       )}
