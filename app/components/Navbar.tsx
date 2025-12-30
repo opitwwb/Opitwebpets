@@ -1,30 +1,31 @@
 'use client'
-
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
-
   return (
     <header className="bg-white shadow">
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/">
-          <a className="flex items-center space-x-2">
-            <span className="text-2xl">🐾</span>
-            <span className="font-bold text-xl text-purple-700">Opitweb</span>
-          </a>
+        <Link href="/" className="flex items-center space-x-2">
+          <Image 
+            src="https://cdttutpzzcsqnpnfsbdv.supabase.co/storage/v1/object/public/Logo/logo.png" 
+            alt="Opitweb Logo" 
+            width={40} 
+            height={40}
+            className="object-contain"
+          />
+          <span className="font-bold text-xl text-purple-700">Opitweb</span>
         </Link>
-
         {/* Desktop */}
         <nav className="hidden md:flex space-x-6">
-          <Link href="/"><a className="hover:text-purple-700 transition-colors">Início</a></Link>
-          <Link href="/about"><a className="hover:text-purple-700 transition-colors">Sobre</a></Link>
-          <Link href="/blog"><a className="hover:text-purple-700 transition-colors">Blog</a></Link>
-          <Link href="/contact"><a className="hover:text-purple-700 transition-colors">Contato</a></Link>
+          <Link href="/" className="hover:text-purple-700 transition-colors">Início</Link>
+          <Link href="/about" className="hover:text-purple-700 transition-colors">Sobre</Link>
+          <Link href="/blog" className="hover:text-purple-700 transition-colors">Blog</Link>
+          <Link href="/contact" className="hover:text-purple-700 transition-colors">Contato</Link>
         </nav>
-
         {/* Botão mobile */}
         <button
           onClick={() => setOpen(!open)}
@@ -34,14 +35,13 @@ export default function Navbar() {
           ☰
         </button>
       </div>
-
       {/* Mobile menu */}
       {open && (
         <nav className="md:hidden bg-white border-t px-4 py-4 space-y-3">
-          <Link href="/"><a onClick={() => setOpen(false)}>Início</a></Link>
-          <Link href="/about"><a onClick={() => setOpen(false)}>Sobre</a></Link>
-          <Link href="/blog"><a onClick={() => setOpen(false)}>Blog</a></Link>
-          <Link href="/contact"><a onClick={() => setOpen(false)}>Contato</a></Link>
+          <Link href="/" onClick={() => setOpen(false)} className="block">Início</Link>
+          <Link href="/about" onClick={() => setOpen(false)} className="block">Sobre</Link>
+          <Link href="/blog" onClick={() => setOpen(false)} className="block">Blog</Link>
+          <Link href="/contact" onClick={() => setOpen(false)} className="block">Contato</Link>
         </nav>
       )}
     </header>
