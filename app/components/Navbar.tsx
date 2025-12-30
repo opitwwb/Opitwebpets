@@ -1,7 +1,6 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
@@ -10,12 +9,14 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center space-x-2">
-          <Image 
+          <img 
             src="https://cdttutpzzcsqnpnfsbdv.supabase.co/storage/v1/object/public/Logo/logo.png" 
             alt="Opitweb Logo" 
-            width={40} 
-            height={40}
-            className="object-contain"
+            className="w-10 h-10 object-contain"
+            onError={(e) => {
+              console.error('Erro ao carregar logo');
+              e.target.style.display = 'none';
+            }}
           />
           <span className="font-bold text-xl text-purple-700">Opitweb</span>
         </Link>
